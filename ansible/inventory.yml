@@ -3,7 +3,7 @@ all:
     windows_server:
       ansible_host: "54.242.141.137"
       ansible_user: Administrator
-      ansible_password: "{{ windows_password }}"
+      ansible_password: "PLACEHOLDER_PASSWORD"
       ansible_connection: winrm
       ansible_winrm_transport: basic
       ansible_winrm_server_cert_validation: ignore
