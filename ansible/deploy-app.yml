@@ -1,0 +1,32 @@
+---
+- name: Deploy .NET Application
+  hosts: windows_server
+  gather_facts: no
+  tasks:
+    - name: Stop IIS
+      win_service:
+        name: W3SVC
+        state: stopped
+
+    - name: Copy application files
+      win_copy:
+        src: "{{ app_source_path }}"
+        dest: C:\inetpub\wwwroot\webapp\
+        remote_src: no
+
+    - name: Create IIS Application
+      win_iis_website:
+        name: "Default Web Site"
+        state: started
+        port: 80
+        ip: "*"
+        hostname: "*"
+        application:
+          - name: webapp
+            physical_path: C:\inetpub\wwwroot\webapp
+            application_pool: DefaultAppPool
+
+    - name: Start IIS
+      win_service:
+        name: W3SVC
+        state: started

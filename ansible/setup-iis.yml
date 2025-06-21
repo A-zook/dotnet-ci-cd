@@ -1,0 +1,41 @@
+---
+- name: Setup IIS and .NET on Windows Server
+  hosts: windows_server
+  gather_facts: no
+  tasks:
+    - name: Install IIS
+      win_feature:
+        name:
+          - IIS-WebServerRole
+          - IIS-WebServer
+          - IIS-CommonHttpFeatures
+          - IIS-HttpErrors
+          - IIS-HttpRedirect
+          - IIS-ApplicationDevelopment
+          - IIS-NetFxExtensibility45
+          - IIS-ISAPIExtensions
+          - IIS-ISAPIFilter
+          - IIS-ASPNET45
+        state: present
+
+    - name: Download .NET Hosting Bundle
+      win_get_url:
+        url: https://download.visualstudio.microsoft.com/download/pr/8bc41df1-cbb3-4e6c-a3e9-e8c8c2c4a9b6/dotnet-hosting-8.0.0-win.exe
+        dest: C:\temp\dotnet-hosting.exe
+        force: yes
+
+    - name: Install .NET Hosting Bundle
+      win_package:
+        path: C:\temp\dotnet-hosting.exe
+        arguments: /quiet
+        state: present
+
+    - name: Create application directory
+      win_file:
+        path: C:\inetpub\wwwroot\webapp
+        state: directory
+
+    - name: Restart IIS
+      win_service:
+        name: W3SVC
+        state: restarted
